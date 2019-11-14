@@ -2,7 +2,7 @@
   <div class=login>
     <el-card style="width:480px; height:350px" >
       <div class='login-pic'><img src="../../assets/img/logo_index.png" alt=""></div>
-      <el-form :model="loginForm" :rules="rules">
+      <el-form :model="loginForm" :rules="rules" ref='loginObj'>
         <el-form-item prop="mobile">
           <el-input v-model="loginForm.mobile" placeholder="请输入手机号"></el-input>
         </el-form-item>
@@ -16,7 +16,7 @@
            <span>我已阅读并同意用户协议及条款</span>
         </el-form-item>
         <el-form-item class="login-button">
-            <el-button type="primary" style='width:400px'>登录</el-button>
+            <el-button type="primary" style='width:400px' @click='onLogin'>登录</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -50,6 +50,41 @@ export default {
           } }
         ]
       }
+    }
+  },
+  methods: {
+    onLogin () {
+      // 校验整个表单的数据 获取整个表单 在form表单标签中设置 ref属性  属性值随便写与表单中的数据
+      // 没有任何关系 相当于只是添加一个标记  使用this.$refs.loginObj
+      // this.$refs.loginObj 获取表单这个dom对象 上面有个方法 validate(参数为函数) 可以校验整个表单
+      // this.$refs.validate()
+      // console.log(this.$refs.loginObj)
+      // 表单验证
+      this.$refs.loginObj.validate(isOk => {
+        // 如果整个表单如果验证通过 调用接口验证是否输入正确
+        if (isOk) {
+          this.$axios({
+            method: 'POST',
+            url: '/v1_0/authorizations',
+            data: this.loginForm
+          }).then(res => {
+            // 输入正确 保存token
+            console.log(res.data)
+            localStorage.setItem('token', res.data.data.token)
+            // 跳转到首页
+            this.$router.push('/home')
+          }).catch(res => {
+            // 输入错误 显示提示信息
+            // eslint-disable-next-line no-unused-expressions
+
+            this.$message({
+              message: '手机号或验证码错误',
+              type: 'error'
+
+            })
+          })
+        }
+      })
     }
   }
 
