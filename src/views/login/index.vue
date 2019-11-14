@@ -79,7 +79,8 @@ export default {
 
             this.$message({
               message: '手机号或验证码错误',
-              type: 'error'
+              type: 'error',
+              duration: 1000
 
             })
           })
