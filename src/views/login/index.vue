@@ -1,6 +1,5 @@
 <template>
-<!-- 一级路由容器 -->
-  <router-view></router-view>
+  <div>登录</div>
 </template>
 
 <script>
