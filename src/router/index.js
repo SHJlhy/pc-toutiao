@@ -2,13 +2,13 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/home'
 import Login from '../views/login'
-
+// 首页和登录页面是不需要按需加载的 进入页面的时候就加载 所以使用先引入的方式
 Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'login',
-    component: Login
+    // 设置默认页为登录页面
+    redirect: '/login'
   },
   {
     path: '/home',
