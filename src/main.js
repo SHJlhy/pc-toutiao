@@ -3,13 +3,11 @@ import App from './App.vue'
 import router from './router'
 import Element from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css' // 引入样式
-// eslint-disable-next-line no-unused-vars
 import axios from 'axios'
-// 配置axios全局使用
+// axios 配置全局使用
 Vue.prototype.$axios = axios
-// 配置基地址
-axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/'
-
+// 设置基地址
+axios.defaults.baseURL = 'http://ttapi.research.itcast.cn/mp/v1_0/'
 Vue.use(Element)
 Vue.config.productionTip = false
 

@@ -1,22 +1,21 @@
 <template>
-  <div class=login>
-    <el-card style="width:480px; height:350px" >
+  <div class='main'>
+    <el-card style="width:450px;height:320px" class='login'>
       <div class='login-pic'><img src="../../assets/img/logo_index.png" alt=""></div>
-      <el-form :model="loginForm" :rules="rules" ref='loginObj'>
+      <el-form :model="loginForm" :rules="loginRules" ref="loginObj">
         <el-form-item prop="mobile">
           <el-input v-model="loginForm.mobile" placeholder="请输入手机号"></el-input>
         </el-form-item>
         <el-form-item class="login-code" prop="code">
-          <el-input v-model="loginForm.code" placeholder="请输入验证码" style="width:280px;margin-right:40px" ></el-input>
+          <el-input  v-model="loginForm.code"  placeholder="请输入验证码" style="width:250px;margin-right:40px"></el-input>
           <el-button>获取验证码</el-button>
         </el-form-item>
         <el-form-item prop="checked">
-              <!-- 勾选同意框 -->
-           <el-checkbox v-model='loginForm.checked' style="margin-right:10px"></el-checkbox>
-           <span>我已阅读并同意用户协议及条款</span>
+          <el-checkbox v-model="loginForm.checked"></el-checkbox>
+          <span style="margin-left:10px">我已阅读并同意用户协议及条款</span>
         </el-form-item>
-        <el-form-item class="login-button">
-            <el-button type="primary" style='width:400px' @click='onLogin'>登录</el-button>
+        <el-form-item>
+          <el-button type="primary" style="width:400px" @click="onLogin">登录</el-button>
         </el-form-item>
       </el-form>
     </el-card>
@@ -25,14 +24,16 @@
 
 <script>
 export default {
-  data () {
+  // eslint-disable-next-line space-before-blocks
+  data (){
     return {
       loginForm: {
         mobile: '',
         code: '',
-        checked: false
+        checked: ''
       },
-      rules: {
+      // 给data中表单的数据指定规则
+      loginRules: {
         mobile: [
           { required: true, message: '请输入手机号' },
           { pattern: /^1[3456789]\d{9}$/, message: '请输入正确的手机号' }
@@ -42,81 +43,68 @@ export default {
           { pattern: /^\d{6}$/, message: '请输入正确的验证码' }
         ],
         checked: [
-          { validator: function (rules, value, callback) {
-            // rule 当前的规则，value 当前的值，在这里值true/false callback回调函数
-            // 正确 校验成功 直接写回调函数  意思 校验成功请继续
-            // 不正确 校验失败 提示错误信息 三元表达式
-            value ? callback() : callback(new Error('协议未勾选'))
-          } }
+          { validator: function (rule, value, callback) {
+            value ? callback() : callback(new Error('未勾选'))
+          }
+          }
         ]
+
       }
     }
   },
   methods: {
     onLogin () {
-      // 校验整个表单的数据 获取整个表单 在form表单标签中设置 ref属性  属性值随便写与表单中的数据
-      // 没有任何关系 相当于只是添加一个标记  使用this.$refs.loginObj
-      // this.$refs.loginObj 获取表单这个dom对象 上面有个方法 validate(参数为函数) 可以校验整个表单
-      // this.$refs.validate()
-      // console.log(this.$refs.loginObj)
-      // 表单验证
+      // 获取表单对象 对表单进行验证
       this.$refs.loginObj.validate(isOk => {
-        // 如果整个表单如果验证通过 调用接口验证是否输入正确
         if (isOk) {
+          // 表单验证通过调用接口  验证是否正确
           this.$axios({
+            url: '/authorizations',
             method: 'POST',
-            url: '/v1_0/authorizations',
             data: this.loginForm
           }).then(res => {
-            // 输入正确 保存token
-            console.log(res.data)
+            console.log(res)
+            // 验证成功 存储token
             localStorage.setItem('token', res.data.data.token)
-            // 跳转到首页
-            this.$router.push('/home')
+            // 跳转到主页
+            this.$router.push('/')
           }).catch(res => {
-            // 输入错误 显示提示信息
-            // eslint-disable-next-line no-unused-expressions
-
+            // 未验证成功
             this.$message({
+              showClose: true,
               message: '手机号或验证码错误',
               type: 'error',
               duration: 1000
-
             })
           })
         }
       })
     }
   }
-
 }
 </script>
 
 <style lang="less" scoped>
-// 使用less  在style标签中设置lang属性 scoped 各个组件中的style样式会不影响
-.login {
-  // background-image: url('../../assets/img/login_bg.jpg');
+.main {
   background: url('../../assets/img/login_bg.jpg');
   background-size: cover;
-  // 背景图片撑不开内容的高度  高度设置为 100vh 会在没有的内容的时候 把盒子撑开和屏幕高度一致
   height:100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  .login-pic{
-    margin-bottom: 10px;
-    text-align: center;
-    img {
-      height: 40px;
+  .login{
+    .login-pic{
+      margin-bottom: 10px;
+      text-align: center;
+      img {
+        height: 30px;
+      }
     }
-  }
-  .login-code{
-    display: flex;
-    justify-content: space-between
+    .login-code{
+      display: flex;
+      justify-content: space-between
+    }
 
-  }
-  .login-button{
-    text-align: center;
   }
 }
 </style>

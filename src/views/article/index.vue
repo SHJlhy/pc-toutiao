@@ -1,9 +1,13 @@
 <template>
-<div>主页</div>
+  <div>文章列表</div>
 </template>
+
 <script>
 export default {
-  name: 'home',
-  components: {}
+
 }
 </script>
+
+<style>
+
+</style>
